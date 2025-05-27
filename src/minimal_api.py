@@ -12,7 +12,11 @@ import asyncio
 import os
 import json
 import re
-from bs4 import BeautifulSoup
+
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    BeautifulSoup = None
 
 app = FastAPI(title="Minimal MCP Bridge API", version="1.0.0")
 
@@ -74,6 +78,21 @@ async def mcp_compatible_endpoint(params: Dict[str, Any]):
 
 def parse_ebay_simple(html: str) -> List[Dict[str, Any]]:
     """Simplified eBay parser"""
+    if not BeautifulSoup:
+        # Fallback regex parsing if BeautifulSoup not available
+        items = []
+        # Simple regex to find prices
+        price_pattern = r'\$[\d,]+\.?\d*'
+        prices = re.findall(price_pattern, html)
+        for i, price in enumerate(prices[:10]):
+            items.append({
+                "title": f"Item {i+1}",
+                "price": float(re.sub(r'[^\d.]', '', price)),
+                "url": "",
+                "marketplace": "ebay"
+            })
+        return items
+    
     soup = BeautifulSoup(html, 'html.parser')
     items = []
     

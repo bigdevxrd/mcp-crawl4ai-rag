@@ -2,15 +2,13 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install minimal dependencies
-RUN pip install --upgrade pip
+# Install only what we need
+RUN pip install --upgrade pip && \
+    pip install fastapi uvicorn httpx beautifulsoup4 lxml
 
-# Copy only necessary files
-COPY pyproject.toml .
-COPY src/ ./src/
-
-# Install Python packages directly
-RUN pip install fastapi uvicorn httpx beautifulsoup4 pydantic
+# Copy only the API files
+COPY src/minimal_api.py ./src/
+COPY src/enhanced_http_api.py ./src/
 
 # Use Railway's PORT
 ENV PORT=8080
