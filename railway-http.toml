@@ -1,0 +1,15 @@
+# Railway Deployment Configuration for MCP Server with HTTP API
+# railway.toml
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "./Dockerfile.http"  # Use the HTTP wrapper instead
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+numReplicas = 1
+
+# Railway will provide PORT automatically
+# The HTTP API will use it

@@ -1,0 +1,18 @@
+# Railway Deployment Configuration for MCP Server
+# railway.toml
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "./Dockerfile"
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+numReplicas = 1
+
+[environments.production]
+PORT = 8051
+
+# The server will listen on Railway's dynamically assigned port
+# But we'll use this for internal reference

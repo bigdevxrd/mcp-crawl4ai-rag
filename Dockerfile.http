@@ -1,0 +1,29 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    chromium \
+    chromium-driver \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+RUN pip install --upgrade pip
+RUN pip install uv
+
+# Copy the MCP server files
+COPY . .
+
+# Install packages
+RUN uv pip install --system -e . && \
+    uv pip install --system beautifulsoup4 && \
+    crawl4ai-setup
+
+# Use Railway's PORT environment variable
+ENV PORT=${PORT:-8080}
+
+EXPOSE ${PORT}
+
+# Run the enhanced HTTP API
+CMD ["python", "-m", "uvicorn", "src.enhanced_http_api:app", "--host", "0.0.0.0", "--port", "${PORT}"]
