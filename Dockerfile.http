@@ -21,9 +21,9 @@ RUN uv pip install --system -e . && \
     crawl4ai-setup
 
 # Use Railway's PORT environment variable
-ENV PORT=${PORT:-8080}
+ENV PORT=8080
 
 EXPOSE ${PORT}
 
-# Run the enhanced HTTP API
-CMD ["python", "-m", "uvicorn", "src.enhanced_http_api:app", "--host", "0.0.0.0", "--port", "${PORT}"]
+# Run the enhanced HTTP API - using shell form to expand $PORT
+CMD python -m uvicorn src.enhanced_http_api:app --host 0.0.0.0 --port $PORT
